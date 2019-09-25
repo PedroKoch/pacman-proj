@@ -106,10 +106,37 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    no = No(problem.getStartState(), 0, heuristic(problem.getStartState(), problem))
+    borda = util.PriorityQueue()
+    borda.push(no, no.custo_total)
+    explorado = set()
+    while not borda.isEmpty():
+        no = borda.pop()
+        explorado = explorado.union(no.estado)
+        if problem.isGoalState(no.estado):
+            return no.solucao
+        for filho, acao, custo_acao in problem.getSuccessors(no.estado):
+            no_filho = No(filho, no.custo_caminho + custo_acao, heuristic(filho, problem))
+            if no_filho.estado not in borda.heap and explorado.__contains__(no_filho.estado):
+                borda.push(no_filho, no_filho.custo_total)
+            else:
+                borda.update(no_filho, no_filho.custo_total)
+    return "Erro"
+
+
+class No:
+    def __init__(self, estado, custo_caminho, custo_objetivo):
+        self.estado = estado
+        self.custo_caminho = custo_caminho
+        self.custo_objetivo = custo_objetivo
+        self.solucao = []  # ??
+        self.atualiza_custos()
+
+    def atualiza_custos(self):
+        self.custo_total = self.custo_caminho + self.custo_objetivo
 
 
 # Abbreviations
