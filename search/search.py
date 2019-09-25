@@ -120,7 +120,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return no.solucao
         for filho, acao, custo_acao in problem.getSuccessors(no.estado):
             no_filho = No(filho, no.custo_caminho + custo_acao, heuristic(filho, problem))
-            if no_filho.estado not in borda.heap and explorado.__contains__(no_filho.estado):
+            if no_filho.estado not in borda.heap and not explorado.__contains__(no_filho.estado):
                 borda.push(no_filho, no_filho.custo_total)
             else:
                 borda.update(no_filho, no_filho.custo_total)
