@@ -1,3 +1,4 @@
+# coding=utf-8
 # search.py
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
@@ -109,79 +110,32 @@ def nullHeuristic(state, problem=None):
 
 
 def aStarSearch(problem, heuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
+    """
+        Search the node that has the lowest combined cost and heuristic first.
+        Implementação do algoritmo A*
+    """
     fn_custo = lambda sequencia_estados: problem.getCostOfActions([x[1] for x in sequencia_estados]) + \
                                          heuristic(sequencia_estados[-1][0], problem)
     borda = util.PriorityQueueWithFunction(fn_custo)
     explorado = []
+    # uma tripla: (estado, ação, custo da ação)
     borda.push([(problem.getStartState(), "Stop", 0)])
 
     while not borda.isEmpty():
         path = borda.pop()
-        s = path[len(path) - 1]
-        s = s[0]
-        if problem.isGoalState(s):
+        estado = path[-1][0]
+        if problem.isGoalState(estado):
+            # retorna uma lista de ações - ignora a primeira ação "Stop"
             return [x[1] for x in path][1:]
-        if s not in explorado:
-            explorado.append(s)
-            for filho in problem.getSuccessors(s):
+        if estado not in explorado:
+            explorado.append(estado)
+            # filho é uma tripla: (estado, ação, custo da ação)
+            for filho in problem.getSuccessors(estado):
                 if filho[0] not in explorado:
                     caminho_filho = path[:]
                     caminho_filho.append(filho)
                     borda.push(caminho_filho)
     return []
-
-#     no = No(problem.getStartState(), 0, heuristic(problem.getStartState(), problem), [])
-#     borda = util.PriorityQueue()
-#     borda.push(no, no.custo_total)
-#     explorado = {}
-#     while not borda.isEmpty():
-#         no = borda.pop()
-#         print "Borda: " + str(borda.heap)
-#         print(no)
-#         explorado.setdefault(hash(no), no.getinfo())
-#         print "Explorado: " + str(explorado)
-#         if problem.isGoalState(no.estado):
-#             print problem.getCostOfActions(no.caminho)
-#             return no.caminho
-#         for filho, acao, custo_acao in problem.getSuccessors(no.estado):
-#             no_filho = No(filho, no.custo_caminho + custo_acao, heuristic(filho, problem), no.caminho+[acao])
-#             if no_filho.estado not in borda.heap : ##and no_filho.estado not in explorado:
-#                 borda.push(no_filho, no_filho.custo_total)
-#             else:
-#                 borda.update(no_filho, no_filho.custo_total)
-#         # raw_input()
-#
-#     return "Erro"
-
-
-# class No:
-#     def __init__(self, estado, custo_caminho, custo_objetivo, caminho):
-#         self.estado = estado
-#         self.custo_caminho = custo_caminho
-#         self.custo_objetivo = custo_objetivo
-#         self.caminho = caminho
-#         self.custo_total = 0
-#         self.atualiza_custos()
-#
-#     def __repr__(self):
-#         return "\nEstado: %s \nGrid:\n%s\n\nCustos:\n - Caminho: %d\n - Objetivo: %d\n - Total: %d\nCaminho: %s\n\n"\
-#             % (self.estado[0], self.estado[1], int(self.custo_caminho), int(self.custo_objetivo), int(self.custo_total), self.caminho)
-#
-#     def __hash__(self):
-#         return hash(self.estado[1])
-#
-#     def getinfo(self):
-#         return {
-#             "Estado": self.estado,
-#             "Custo Total": self.custo_total,
-#             "Custo Caminho": self.custo_caminho,
-#             "Custo Objetivo": self.custo_objetivo,
-#             "Caminho": self.caminho
-#         }
-#
-#     def atualiza_custos(self):
-#         self.custo_total = self.custo_caminho + self.custo_objetivo
 
 
 # Abbreviations
