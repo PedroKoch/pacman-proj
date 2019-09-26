@@ -453,8 +453,23 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    if "food_positions" not in problem.heuristicInfo:
+        problem.heuristicInfo["food_positions"] = foodGrid.asList()
+
+    problem.heuristicInfo["foodCount"] = foodGrid.count()
+    foods = foodGrid.asList()
+
+    print "position - " + str(position) + "; foods - " + str(foods) + " - " + str(len(foods))
+    if len(foods) == 0:
+        closest_food_distance = 0
+    else:
+        closest_food_distance = 99999
+    for pos in problem.heuristicInfo["food_positions"]:
+        distance = abs(position[0] - pos[0]) + abs(position[1] - pos[1])
+        if distance < closest_food_distance:
+            closest_food_distance = distance
+    print closest_food_distance
+    return closest_food_distance + len(foods)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"

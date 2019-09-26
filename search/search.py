@@ -18,6 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import searchAgents
 
 class SearchProblem:
     """
@@ -107,33 +108,42 @@ def nullHeuristic(state, problem=None):
     return 0
 
 
-def aStarSearch(problem, heuristic=nullHeuristic):
+def aStarSearch(problem, heuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    no = No(problem.getStartState(), 0, heuristic(problem.getStartState(), problem))
+    no = No(problem.getStartState(), 0, heuristic(problem.getStartState(), problem), [])
     borda = util.PriorityQueue()
     borda.push(no, no.custo_total)
     explorado = set()
     while not borda.isEmpty():
         no = borda.pop()
+        print borda.heap
+        print(no)
         explorado = explorado.union(no.estado)
         if problem.isGoalState(no.estado):
-            return no.solucao
+            print problem.getCostOfActions(no.caminho)
+            return no.caminho
         for filho, acao, custo_acao in problem.getSuccessors(no.estado):
-            no_filho = No(filho, no.custo_caminho + custo_acao, heuristic(filho, problem))
+            no_filho = No(filho, no.custo_caminho + custo_acao, heuristic(filho, problem), no.caminho+[acao])
             if no_filho.estado not in borda.heap and not explorado.__contains__(no_filho.estado):
                 borda.push(no_filho, no_filho.custo_total)
             else:
                 borda.update(no_filho, no_filho.custo_total)
+        # raw_input()
     return "Erro"
 
 
 class No:
-    def __init__(self, estado, custo_caminho, custo_objetivo):
+    def __init__(self, estado, custo_caminho, custo_objetivo, caminho):
         self.estado = estado
         self.custo_caminho = custo_caminho
         self.custo_objetivo = custo_objetivo
-        self.solucao = []  # ??
+        self.caminho = caminho
+        self.custo_total = 0
         self.atualiza_custos()
+
+    def __repr__(self):
+        return "\nEstado: %s \nGrid:\n%s\n\nCustos:\n - Caminho: %d\n - Objetivo: %d\n - Total: %d\nCaminho: %s\n\n"\
+            % (self.estado[0], self.estado[1], int(self.custo_caminho), int(self.custo_objetivo), int(self.custo_total), self.caminho)
 
     def atualiza_custos(self):
         self.custo_total = self.custo_caminho + self.custo_objetivo
