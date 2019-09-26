@@ -19,7 +19,6 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
-import searchAgents
 
 class SearchProblem:
     """
